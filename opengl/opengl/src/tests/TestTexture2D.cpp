@@ -10,7 +10,8 @@ namespace test {
 	TestTexture2D::TestTexture2D()
 		: m_TranslationA(200, 200, 0)
 		, m_TranslationB(400, 200, 0)
-		, m_Proj(glm::ortho(0.f, 960.f, 0.f, 540.f, -1.f, 1.f))
+//		, m_Proj(glm::ortho(0.f, 960.f, 0.f, 540.f, -1.f, 1.f))
+		, m_Proj(glm::ortho(0.f, WINDOW_WIDTH, 0.f, WINDOW_HEIGHT, -1.f, 1.f))
 		, m_View(glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0)))
 	{
 
@@ -21,7 +22,7 @@ namespace test {
 			-50.f,  50.f, 0.f, 1.f  // Top Left, 3
 		};
 
-		unsigned int indicies[] = {
+		unsigned short indicies[] = {
 			0, 1, 2,
 			2, 3, 0
 		};
@@ -33,7 +34,7 @@ namespace test {
 		m_VAO = std::make_unique<VertexArray>();
 
 		// Create and Bind the vertex buffer
-		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+		m_VertexBuffer = std::make_unique<VertexBuffer>(positions, (unsigned int) (4 * 4 * sizeof(float)));
 
 		// Define the layout of the vertex buffer memory
 		VertexBufferLayout layout;
@@ -67,15 +68,18 @@ namespace test {
 
 	void TestTexture2D::OnRender()
 	{
-		GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+        GLCall(glClearColor(0.f, 0.f, 0.f, 1.f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
 		Renderer renderer;
 
 		m_Texture->Bind();
 
-		glm::mat4 proj = glm::ortho(0.f, 960.f, 0.f, 540.f, -1.f, 1.f);
-		glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0));
+		//glm::mat4 proj = glm::ortho(0.f, WINDOW_WIDTH, 0.f, WINDOW_HEIGHT, -1.f, 1.f);
+		//glm::mat4 view = glm::translate(glm::mat4(1.f), glm::vec3(0, 0, 0));
 
 		{
 			glm::mat4 model = glm::translate(glm::mat4(1.f), m_TranslationA);
@@ -95,12 +99,13 @@ namespace test {
 			renderer.Draw(*m_VAO, *m_IndexBuffer, *m_Shader);
 		}
 
+        GLCall(glDisable(GL_BLEND));
 	}
 
 	void TestTexture2D::OnImGuiRender()
 	{
-		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, 960.0f);
-		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, 960.0f);
+		ImGui::SliderFloat3("Translation A", &m_TranslationA.x, 0.0f, WINDOW_WIDTH);
+		ImGui::SliderFloat3("Translation B", &m_TranslationB.x, 0.0f, WINDOW_WIDTH);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	}
 }

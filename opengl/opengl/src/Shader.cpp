@@ -9,18 +9,18 @@
 
 Shader::Shader(const std::string & filepath)
     : m_FilePath(filepath)
-    , m_RendererID(0)
+    , m_ProgramID(0)
 {
     // Load the shader
     ShaderProgramSource source = ParseShader(filepath);
 
     // Compile the shader
-    m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+    m_ProgramID = CreateShader(source.VertexSource, source.FragmentSource);
 }
 
 Shader::~Shader()
 {
-    GLCall(glDeleteProgram(m_RendererID));
+    GLCall(glDeleteProgram(m_ProgramID));
 }
 
 ShaderProgramSource Shader::ParseShader(const std::string& filePath)
@@ -104,7 +104,7 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
 
 void Shader::Bind() const
 {
-    GLCall(glUseProgram(m_RendererID));
+    GLCall(glUseProgram(m_ProgramID));
 }
 
 void Shader::UnBind() const
@@ -122,9 +122,19 @@ void Shader::SetUniform1f(const std::string & name, float v)
     GLCall(glUniform1f(GetUniformLocation(name), v));
 }
 
+void Shader::SetUniform3fv(const std::string & name, const glm::vec3& vec)
+{
+    GLCall(glUniform3fv(GetUniformLocation(name), 1, &vec[0]));
+}
+
 void Shader::SetUniform4f(const std::string & name, float v0, float v1, float v2, float v3)
 {
     GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+}
+
+void Shader::SetUniform4fv(const std::string & name, const glm::vec4& vec)
+{
+    GLCall(glUniform4fv(GetUniformLocation(name), 1, &vec[0]));
 }
 
 void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
@@ -137,7 +147,7 @@ int Shader::GetUniformLocation(const std::string & name)
     if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
         return m_UniformLocationCache[name];
 
-    GLCall(int location = glGetUniformLocation(m_RendererID, name.c_str()))
+    GLCall(int location = glGetUniformLocation(m_ProgramID, name.c_str()))
 
     if(location == -1)
         std::cout << "Warning: uniform'" << name << "' doesn't exist!" << std::endl;

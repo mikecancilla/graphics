@@ -6,6 +6,12 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 
+#define WINDOW_WIDTH 1200.f
+#define WINDOW_HEIGHT 600.f
+
+#define PI 3.14159265359f
+#define RAD(x) ((x) * (PI) / 180.f)
+
 #define ASSERT(x) if(!(x)) __debugbreak();
 #define GLCall(x) GLClearError();\
     x;\

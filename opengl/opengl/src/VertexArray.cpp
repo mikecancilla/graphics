@@ -4,12 +4,12 @@
 
 VertexArray::VertexArray()
 {
-    GLCall(glGenVertexArrays(1, &m_RendererID));
+    GLCall(glGenVertexArrays(1, &m_vertexArrayObjectID));
 }
 
 VertexArray::~VertexArray()
 {
-    GLCall(glDeleteVertexArrays(1, &m_RendererID));
+    GLCall(glDeleteVertexArrays(1, &m_vertexArrayObjectID));
 }
 
 void VertexArray::AddBuffer(const VertexBuffer & vb, const VertexBufferLayout & layout)
@@ -30,6 +30,8 @@ void VertexArray::AddBuffer(const VertexBuffer & vb, const VertexBufferLayout & 
 
         GLCall(glEnableVertexAttribArray(i));
 
+        //unsigned int stride = layout.GetStride(); // For Debugging
+
         // Define the layout of the data in the vertex buffer
         GLCall(glVertexAttribPointer(i,                     // index
                                      element.count,         // number of components per generic vertex attribute.  Must be 1, 2, 3, 4
@@ -44,7 +46,7 @@ void VertexArray::AddBuffer(const VertexBuffer & vb, const VertexBufferLayout & 
 
 void VertexArray::Bind() const
 {
-    GLCall(glBindVertexArray(m_RendererID));
+    GLCall(glBindVertexArray(m_vertexArrayObjectID));
 }
 
 void VertexArray::UnBind() const
