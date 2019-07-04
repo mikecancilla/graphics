@@ -31,7 +31,7 @@ namespace test {
 		//glm::mat4 m_proj, m_view;
 		//glm::vec3 m_translationA;
 
-        ShapeData m_cube;
+        ShapeData m_shape;
         Camera m_camera;
 	};
 }
